@@ -15,7 +15,8 @@ The key features include:
 ## Requirements
 
 - Python 3.x
-- Pillow (PIL) library
+- Pillow (PIL)
+- OpenCV
 
 ## Installation
 
@@ -29,6 +30,7 @@ The key features include:
 
     ```
     pip install pillow
+    pip install opencv-python
     ```
 
 ## Usage

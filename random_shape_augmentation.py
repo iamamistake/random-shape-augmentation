@@ -3,6 +3,7 @@ import random
 import os
 import math
 from PIL import Image
+import cv2
 
 def parse_user_input_arguments():
     parser = argparse.ArgumentParser(prog = "Random Shape Augmentation",
@@ -47,21 +48,21 @@ def main():
     MAX_INPUT_SHAPE_SIZE = max(max(Image.open(shape).size) for shape in INPUT_SHAPES)
     MIN_BACKGROUND_SIZE = min(OUTPUT_DIMENSIONS)
     MAX_ITERATIONS_PER_SHAPE = get_max_iterations_per_shape(MIN_BACKGROUND_SIZE, MAX_INPUT_SHAPE_SIZE, TOTAL_INPUT_SHAPES_NUM)
-
-    if MAX_ITERATIONS_PER_SHAPE == 0:
-        raise Exception("Unable to fit all input shapes within the output image dimensions (consider increasing the output image dimensions, reducing the number of input shapes or decreasing the input shape dimensions)")
-
     SHAPE_ROTATION_MIN_BOUND_DEG = 0
     SHAPE_ROTATION_MAX_BOUND_DEG = 90
     SHAPE_SCALING_FACTOR_MIN_BOUND = 0.75
     SHAPE_SCALING_FACTOR_MAX_BOUND = 1.0
+
+    if MAX_ITERATIONS_PER_SHAPE == 0:
+        raise Exception("Unable to fit all input shapes within the output image dimensions (consider increasing the output image dimensions, reducing the number of input shapes or decreasing the input shape dimensions)")
+
 
     for output_images_num in range(TOTAL_OUTPUT_IMAGES_NUM):
         output_image = Image.new('RGB', OUTPUT_DIMENSIONS, (0, 0, 0))
         occupied_coordinates = []
 
         for shape in INPUT_SHAPES:
-            shape = Image.open(shape)
+            shape = Image.fromarray(cv2.imread(shape))
             for _ in range(MAX_ITERATIONS_PER_SHAPE):
                 rotated_shape = shape.rotate(random.randint(SHAPE_ROTATION_MIN_BOUND_DEG, SHAPE_ROTATION_MAX_BOUND_DEG), expand = True)
                 scaling_factor = random.uniform(SHAPE_SCALING_FACTOR_MIN_BOUND, SHAPE_SCALING_FACTOR_MAX_BOUND)
